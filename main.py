@@ -1,13 +1,46 @@
 from pygame import *
 window = display.set_mode((700,500))
 display.set_caption('Пинг понг')
-window.fill((255,200,200))
+window.fill((255,255,255))
+class GameSprite(sprite.Sprite):
+    def __init__(self,player_speed,player_x,player_y,player_image,height,width):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image),(width,height))
+        self.player_speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+    def reset(self):
+        window.blit(self.image,(self.rect.x,self.rect.y))
+class Player(GameSprite):
+    def movement_left(self):
+        key_presed = key.get_pressed()
+        if key_presed[K_w] and self.rect.y > 0:
+            self.rect.y -= self.player_speed
+        if key_presed[K_s] and self.rect.y < 420:
+            self.rect.y += self.player_speed
+    def movement_right(self):
+        key_presed = key.get_pressed()
+        if key_presed[K_UP] and self.rect.y > 0:
+            self.rect.y -= self.player_speed
+        if key_presed[K_DOWN] and self.rect.y < 420:
+            self.rect.y += self.player_speed
+player_left = Player(7,0,170,'i.jpg',130,90)
+player_right = Player(7,620,170,'i.jpg',130,90)
+
 fps = 60
 game = True
+finish = False
 clock = time.Clock()
 while game:
     for i in event.get():
         if i.type == QUIT:
             game = False
+    if finish != True:
+        window.fill((255,255,255))
+        player_left.movement_left()
+        player_left.reset()
+        player_right.movement_right()
+        player_right.reset()
     display.update()
     clock.tick(fps)
